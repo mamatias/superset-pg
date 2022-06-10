@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  superset:
+    container_name: ss
+    build: .
+
+    ports:
+      - 8088:8088
+
+    links:
+      - "backend:db"
+
+    volumes:
+      - ./pythonpath/:/app/pythonpath/
+
+  backend:
+    image: postgres:13.7-alpine
+    container_name: pg
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: main
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    ports:
+      - 5432:5432
+
+    volumes:
+      - ./backend/:/var/lib/postgresql/data/
+
+  adminer:
+    image: adminer
+    container_name: admfe
+
+    ports:
+      - 8080:8080
+
+    links:
+      - "backend:db"
